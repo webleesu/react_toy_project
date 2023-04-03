@@ -1,13 +1,12 @@
 import { v4 } from "uuid";
 import { readDB, writeDB } from "../dbController.js";
 
-const getMsgs = () => {
-  readDB("messages");
-};
-const setMsgs = (data) => writeDB("messages", msgs);
+const getMsgs = () => readDB("messages");
+const setMsgs = (data) => writeDB("messages", data);
+
 const messagesRoute = [
   {
-    //GET MESSAGES
+    // GET MESSAGES
     method: "get",
     route: "/messages",
     handler: (req, res) => {
@@ -31,7 +30,7 @@ const messagesRoute = [
     },
   },
   {
-    // CREATE MESSAGES
+    // CREATE MESSAGE
     method: "post",
     route: "/messages",
     handler: ({ body }, res) => {
@@ -48,15 +47,16 @@ const messagesRoute = [
     },
   },
   {
-    // UPDATE MESSAGES
+    // UPDATE MESSAGE
     method: "put",
     route: "/messages/:id",
     handler: ({ body, params: { id } }, res) => {
       try {
         const msgs = getMsgs();
         const targetIndex = msgs.findIndex((msg) => msg.id === id);
-        if (targetIndex < 0) throw "메시지가 없습니다";
-        if (msgs[targetIndex].userId !== body.userId) throw "사용자가 다릅니다";
+        if (targetIndex < 0) throw "메시지가 없습니다.";
+        if (msgs[targetIndex].userId !== body.userId)
+          throw "사용자가 다릅니다.";
 
         const newMsg = { ...msgs[targetIndex], text: body.text };
         msgs.splice(targetIndex, 1, newMsg);
@@ -65,20 +65,19 @@ const messagesRoute = [
       } catch (err) {
         res.status(500).send({ error: err });
       }
-      const msgs = getMsgs();
-      res.send();
     },
   },
   {
-    // DELETE MESSAGES
+    // DELETE MESSAGE
     method: "delete",
     route: "/messages/:id",
     handler: ({ body, params: { id } }, res) => {
       try {
         const msgs = getMsgs();
         const targetIndex = msgs.findIndex((msg) => msg.id === id);
-        if (targetIndex < 0) throw "메시지가 없습니다";
-        if (msgs[targetIndex].userId !== body.userId) throw "사용자가 다릅니다";
+        if (targetIndex < 0) throw "메시지가 없습니다.";
+        if (msgs[targetIndex].userId !== body.userId)
+          throw "사용자가 다릅니다.";
 
         msgs.splice(targetIndex, 1);
         setMsgs(msgs);
@@ -86,8 +85,6 @@ const messagesRoute = [
       } catch (err) {
         res.status(500).send({ error: err });
       }
-      const msgs = getMsgs();
-      res.send();
     },
   },
 ];
